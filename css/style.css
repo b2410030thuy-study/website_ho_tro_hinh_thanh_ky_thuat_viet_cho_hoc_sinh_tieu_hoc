@@ -1,166 +1,389 @@
-@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
 
-* { 
-    box-sizing: border-box; 
-    font-family: 'Fredoka', 'Nunito', cursive, sans-serif; 
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Nunito', sans-serif;
 }
 
-body { 
-    margin: 0; 
-    padding: 20px 0; 
-    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 40%, #a1c4fd 100%);
-    background-attachment: fixed;
-    color: #2c3e50; 
-    min-height: 100vh; 
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
+body {
+    background-color: #f7d794;
+    color: #2d3436;
+    min-height: 100vh;
 }
 
-.main-wrapper { width: 100%; max-width: 1100px; padding: 15px; }
+.hidden {
+    display: none !important;
+}
 
-/* HEADER */
-.top-header { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    background: #ffffff; 
-    padding: 16px 24px; 
-    border-radius: 30px; 
-    border: 4px solid #000; 
-    box-shadow: 0px 8px 0px #000; 
-    margin-bottom: 24px; 
-    flex-wrap: wrap; 
+/* --- 1. GIAO DIỆN ĐĂNG NHẬP / ĐĂNG KÝ --- */
+.login-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.login-card {
+    background: #ffffff;
+    border: 4px solid #000000;
+    box-shadow: 8px 8px 0px #000000;
+    border-radius: 25px;
+    padding: 30px;
+    width: 100%;
+    max-width: 420px;
+    text-align: center;
+}
+
+.brand-icon {
+    font-size: 50px;
+    background: #ff7675;
+    width: 80px;
+    height: 80px;
+    line-height: 80px;
+    border-radius: 50%;
+    border: 3px solid #000;
+    margin: 0 auto 10px;
+}
+
+.brand h1 {
+    font-size: 26px;
+    font-weight: 900;
+    color: #2d3436;
+}
+
+.brand p {
+    font-size: 14px;
+    font-weight: 700;
+    color: #636e72;
+    margin-bottom: 20px;
+}
+
+.role-switch {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.role-btn {
+    flex: 1;
+    padding: 10px;
+    border: 3px solid #000;
+    border-radius: 15px;
+    background: #eee;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 2px 2px 0 #000;
+}
+
+.role-btn.active {
+    background: #74b9ff;
+    box-shadow: 4px 4px 0 #000;
+    transform: translateY(-2px);
+}
+
+.auth-tabs {
+    display: flex;
+    border-bottom: 3px solid #000;
+    margin-bottom: 20px;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    background: none;
+    font-weight: 800;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.tab-btn.active {
+    border-bottom: 4px solid #ff7675;
+    color: #d63031;
+}
+
+.input-group {
+    text-align: left;
+    margin-bottom: 15px;
+}
+
+.input-group label {
+    display: block;
+    font-weight: 800;
+    margin-bottom: 5px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px;
+    border: 3px solid #000;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    outline: none;
+}
+
+.btn-submit {
+    width: 100%;
+    padding: 12px;
+    background: #00b894;
+    color: #fff;
+    font-size: 18px;
+    font-weight: 900;
+    border: 3px solid #000;
+    border-radius: 15px;
+    box-shadow: 4px 4px 0 #000;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.btn-submit:active {
+    box-shadow: 0 0 0 #000;
+    transform: translate(4px, 4px);
+}
+
+/* --- 2. GIAO DIỆN CHÍNH (APP SCREEN) --- */
+.main-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.top-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    border: 4px solid #000;
+    border-radius: 20px;
+    padding: 15px 20px;
+    box-shadow: 6px 6px 0 #000;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
     gap: 15px;
 }
 
-.user-info-card { display: flex; align-items: center; gap: 14px; }
-.avatar-badge { 
-    font-size: 32px; 
-    background: #fffa65; 
-    width: 55px; 
-    height: 55px; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    border-radius: 50%; 
-    border: 3px solid #000; 
-    box-shadow: 0px 4px 0px #000;
+.user-info-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
-.role-tag { 
-    font-size: 12px; 
-    font-weight: 900; 
-    color: #ffffff; 
-    background: #ff4757; 
-    padding: 4px 10px; 
-    border-radius: 14px; 
-    border: 2px solid #000;
-    text-transform: uppercase; 
-}
-.name-display { display: flex; align-items: center; gap: 8px; font-size: 20px; font-weight: 900; color: #2d3436; }
 
-.main-nav { 
-    display: flex; 
-    gap: 10px; 
-    background: #74b9ff; 
-    padding: 8px; 
-    border-radius: 25px; 
+.avatar-badge {
+    font-size: 30px;
+    background: #ffeaa7;
+    width: 50px;
+    height: 50px;
+    line-height: 45px;
+    text-align: center;
+    border-radius: 50%;
     border: 3px solid #000;
 }
-.nav-btn { 
-    border: 3px solid #000; 
-    background: #fffa65; 
-    padding: 10px 18px; 
-    font-size: 16px; 
-    font-weight: 900; 
-    color: #000000; 
-    border-radius: 18px; 
-    cursor: pointer; 
-    box-shadow: 0px 5px 0px #000;
+
+.name-display {
+    font-size: 18px;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-/* KHU VỰC BÀI HỌC */
-.workspace-grid { display: grid; grid-template-columns: 320px 1fr; gap: 24px; }
-
-/* SIDEBAR BẢNG CHỮ CÁI */
-.alphabet-sidebar { 
-    background: #ffffff; 
-    border-radius: 30px; 
-    padding: 20px; 
-    border: 4px solid #000; 
-    box-shadow: 0px 10px 0px #000; 
-}
-.sidebar-header h3 { margin: 0 0 16px 0; font-size: 22px; font-weight: 900; color: #ff3366; text-align: center; }
-
-.alphabet-grid { 
-    display: grid; 
-    grid-template-columns: repeat(3, 1fr); 
-    gap: 12px; 
-    max-height: 480px; 
-    overflow-y: auto; 
-    padding-right: 5px; 
+.btn-edit-inline {
+    background: #fdcb6e;
+    border: 2px solid #000;
+    border-radius: 8px;
+    padding: 2px 8px;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
 }
 
-/* NÚT CHỮ CÁI 3D HOẠT HỌA */
-.letter-btn { 
-    padding: 14px 0; 
-    font-size: 26px; 
-    font-weight: 900; 
-    background: #ffeaa7; 
-    color: #2d3436; 
-    border: 3px solid #000; 
-    border-radius: 18px; 
-    cursor: pointer; 
-    text-transform: uppercase; 
-    box-shadow: 0px 5px 0px #000;
-    transition: all 0.1s;
-}
-.letter-btn:hover { background: #fdcb6e; }
-.letter-btn.active { 
-    background: #ff7675; 
-    color: #ffffff; 
-    transform: translateY(3px); 
-    box-shadow: 0px 2px 0px #000; 
+.role-tag {
+    background: #74b9ff;
+    padding: 2px 10px;
+    border-radius: 10px;
+    border: 2px solid #000;
+    font-size: 12px;
+    font-weight: 800;
 }
 
-/* KHUNG HIỂN THỊ VIDEO & MÔ TẢ */
-.lesson-card { 
-    background: #ffffff; 
-    border-radius: 30px; 
-    padding: 26px; 
-    border: 4px solid #000; 
-    box-shadow: 0px 10px 0px #000; 
+.main-nav {
+    display: flex;
+    gap: 10px;
 }
-.lesson-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.title-group { display: flex; align-items: center; gap: 12px; }
-.badge-icon { font-size: 32px; }
-.title-group h2 { margin: 0; font-size: 26px; font-weight: 900; color: #0984e3; }
 
-.video-frame-container { 
-    position: relative; 
-    padding-bottom: 56.25%; 
-    height: 0; 
-    overflow: hidden; 
-    border-radius: 24px; 
-    border: 4px solid #000; 
-    background: #000; 
-    box-shadow: 0px 6px 0px #000;
+.nav-btn {
+    padding: 10px 18px;
+    border: 3px solid #000;
+    border-radius: 15px;
+    background: #fff;
+    font-weight: 800;
+    font-size: 15px;
+    cursor: pointer;
+    box-shadow: 3px 3px 0 #000;
 }
-.video-frame-container iframe { position: absolute; top:0; left:0; width:100%; height:100%; }
 
-.lesson-guide { 
-    margin-top: 20px; 
-    background: #fff9db; 
-    border: 3px solid #000; 
-    padding: 16px 20px; 
-    border-radius: 20px; 
-    box-shadow: 0px 5px 0px #000;
+.nav-btn.active {
+    background: #ff7675;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 5px 5px 0 #000;
 }
-.guide-title { font-weight: 900; font-size: 18px; color: #d63031; margin-bottom: 6px; }
-.lesson-guide p { margin: 0; font-size: 17px; font-weight: 800; color: #2d3436; }
 
-/* TỐI ƯU MOBILE */
-@media (max-width: 768px) {
-    .workspace-grid { grid-template-columns: 1fr; }
-    .alphabet-grid { grid-template-columns: repeat(5, 1fr); max-height: 200px; }
+.btn-logout {
+    padding: 8px 15px;
+    background: #ff7675;
+    color: #fff;
+    border: 3px solid #000;
+    border-radius: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 3px 3px 0 #000;
+}
+
+/* --- 3. KHUNG BÀI HỌC VÀ BẢNG CHỮ CÁI --- */
+.workspace-grid {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 20px;
+}
+
+@media (max-width: 850px) {
+    .workspace-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.alphabet-sidebar {
+    background: #fff;
+    border: 4px solid #000;
+    border-radius: 20px;
+    padding: 15px;
+    box-shadow: 6px 6px 0 #000;
+}
+
+.sidebar-header h3 {
+    font-size: 18px;
+    font-weight: 900;
+    margin-bottom: 12px;
+    text-align: center;
+}
+
+.alphabet-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    max-height: 480px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.letter-btn {
+    aspect-ratio: 1;
+    font-size: 20px;
+    font-weight: 900;
+    background: #a29bfe;
+    color: #fff;
+    border: 3px solid #000;
+    border-radius: 12px;
+    box-shadow: 2px 2px 0 #000;
+    cursor: pointer;
+}
+
+.letter-btn.active {
+    background: #fd79a8;
+    transform: translate(2px, 2px);
+    box-shadow: 0 0 0 #000;
+}
+
+.lesson-card {
+    background: #fff;
+    border: 4px solid #000;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 6px 6px 0 #000;
+}
+
+.video-frame-container {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    border: 4px solid #000;
+    border-radius: 15px;
+    overflow: hidden;
+    margin: 15px 0;
+}
+
+.video-frame-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.lesson-guide {
+    background: #ffeaa7;
+    border: 3px solid #000;
+    border-radius: 15px;
+    padding: 15px;
+}
+
+.guide-title {
+    font-weight: 900;
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+/* --- 4. MODAL BẢO VỆ --- */
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.modal-box {
+    background: #fff;
+    border: 4px solid #000;
+    border-radius: 20px;
+    padding: 20px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 8px 8px 0 #000;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.btn-cancel {
+    padding: 8px 15px;
+    border: 3px solid #000;
+    border-radius: 10px;
+    background: #b2bec3;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.btn-save {
+    padding: 8px 15px;
+    border: 3px solid #000;
+    border-radius: 10px;
+    background: #00b894;
+    color: #fff;
+    font-weight: 800;
+    cursor: pointer;
 }
