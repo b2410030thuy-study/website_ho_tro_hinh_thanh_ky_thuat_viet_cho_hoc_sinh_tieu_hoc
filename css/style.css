@@ -8,7 +8,6 @@
 body { 
     margin: 0; 
     padding: 20px 0; 
-    /* Nền gradient cầu phồng rực rỡ */
     background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 40%, #a1c4fd 100%);
     background-attachment: fixed;
     color: #2c3e50; 
@@ -18,153 +17,9 @@ body {
     align-items: center; 
 }
 
-.hidden { display: none !important; }
-
-/* HIỆU ỨNG NỔI HOẠT HỌA (CARTOON SHADOW) & ĐỘNG */
-@keyframes float {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-8px); }
-    100% { transform: translateY(0px); }
-}
-
-@keyframes bounce {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-}
-
-/* === 1. ĐĂNG NHẬP / ĐĂNG KÝ (AUTH SCREEN) === */
-.login-wrapper { width: 100%; max-width: 450px; padding: 15px; }
-.login-card { 
-    background: #ffffff; 
-    padding: 35px 25px; 
-    border-radius: 35px; 
-    border: 5px solid #000000;
-    box-shadow: 0px 12px 0px #000000, 0px 15px 25px rgba(0,0,0,0.2); 
-    text-align: center; 
-    position: relative;
-    overflow: hidden;
-}
-
-.brand-icon { 
-    font-size: 65px; 
-    display: inline-block;
-    animation: float 3s ease-in-out infinite;
-}
-
-.brand h1 { 
-    font-size: 32px; 
-    font-weight: 900; 
-    color: #ff3366; 
-    text-shadow: 2px 2px 0px #000;
-    margin: 5px 0; 
-}
-.brand p { 
-    font-size: 16px; 
-    font-weight: 800; 
-    color: #ff9900; 
-    margin: 0 0 20px 0; 
-}
-
-/* TAB ĐĂNG NHẬP / ĐĂNG KÝ */
-.auth-tabs { 
-    display: flex; 
-    gap: 10px; 
-    margin-bottom: 20px; 
-    background: #ffeaa7; 
-    padding: 8px; 
-    border-radius: 25px; 
-    border: 3px solid #000;
-}
-.tab-btn { 
-    flex: 1; 
-    border: 3px solid transparent; 
-    background: transparent; 
-    padding: 10px; 
-    font-weight: 900; 
-    font-size: 16px; 
-    color: #d63031; 
-    border-radius: 18px; 
-    cursor: pointer; 
-    transition: all 0.2s;
-}
-.tab-btn.active { 
-    background: #ff7675; 
-    color: #ffffff; 
-    border-color: #000;
-    box-shadow: 0px 4px 0px #000;
-}
-
-/* CHỌN VAI TRÒ */
-.role-switch { display: flex; gap: 10px; margin-bottom: 20px; }
-.role-btn { 
-    flex: 1; 
-    border: 3px solid #000; 
-    background: #eccc68; 
-    padding: 12px; 
-    font-size: 16px; 
-    font-weight: 900; 
-    color: #2d3436; 
-    border-radius: 20px; 
-    cursor: pointer; 
-    box-shadow: 0px 4px 0px #000;
-    transition: transform 0.1s;
-}
-.role-btn.active { 
-    background: #00cec9; 
-    color: #fff; 
-    transform: translateY(2px);
-    box-shadow: 0px 2px 0px #000;
-}
-
-/* Ô NHẬP LIỆU HOẠT HỌA */
-.input-group { text-align: left; margin-bottom: 16px; }
-.input-group label { display: block; font-size: 15px; font-weight: 900; color: #2d3436; margin-bottom: 6px; }
-.input-group input { 
-    width: 100%; 
-    padding: 14px 18px; 
-    border: 3px solid #000; 
-    border-radius: 20px; 
-    font-size: 16px; 
-    font-weight: 800; 
-    outline: none; 
-    background: #f7f1e3;
-    box-shadow: inset 0px 4px 0px rgba(0,0,0,0.05);
-}
-.input-group input:focus { background: #ffffff; border-color: #ff3366; }
-
-/* NÚT SUBMIT BỒNG BỀNH */
-.btn-submit { 
-    width: 100%; 
-    padding: 16px; 
-    background: #2ed573; 
-    color: #ffffff; 
-    border: 3px solid #000; 
-    border-radius: 22px; 
-    font-size: 20px; 
-    font-weight: 900; 
-    cursor: pointer; 
-    margin-top: 10px; 
-    box-shadow: 0px 6px 0px #000;
-    transition: all 0.1s;
-}
-.btn-submit:hover { transform: translateY(-2px); box-shadow: 0px 8px 0px #000; }
-.btn-submit:active { transform: translateY(4px); box-shadow: 0px 2px 0px #000; }
-
-.error-banner { 
-    margin-top: 15px; 
-    padding: 12px; 
-    background: #ff4757; 
-    color: #ffffff; 
-    border: 3px solid #000;
-    border-radius: 16px; 
-    font-size: 15px; 
-    font-weight: 900; 
-    box-shadow: 0px 4px 0px #000;
-}
-
-/* === 2. MÀN HÌNH CHÍNH & THANH HEADER === */
 .main-wrapper { width: 100%; max-width: 1100px; padding: 15px; }
 
+/* HEADER */
 .top-header { 
     display: flex; 
     justify-content: space-between; 
@@ -203,19 +58,7 @@ body {
     text-transform: uppercase; 
 }
 .name-display { display: flex; align-items: center; gap: 8px; font-size: 20px; font-weight: 900; color: #2d3436; }
-.btn-edit-inline { 
-    background: #ffeaa7; 
-    border: 2px solid #000; 
-    color: #d63031; 
-    font-size: 12px; 
-    font-weight: 900; 
-    cursor: pointer; 
-    padding: 4px 8px; 
-    border-radius: 10px; 
-    box-shadow: 0px 2px 0px #000;
-}
 
-/* THANH MENU ĐIỀU HƯỚNG HOẠT HỌA */
 .main-nav { 
     display: flex; 
     gap: 10px; 
@@ -225,81 +68,21 @@ body {
     border: 3px solid #000;
 }
 .nav-btn { 
-    border: 3px solid transparent; 
-    background: transparent; 
-    padding: 10px 18px; 
-    font-size: 16px; 
-    font-weight: 900; 
-    color: #ffffff; 
-    border-radius: 18px; 
-    cursor: pointer; 
-    transition: all 0.15s; 
-}
-.nav-btn.active { 
+    border: 3px solid #000; 
     background: #fffa65; 
-    color: #000000; 
-    border-color: #000; 
-    box-shadow: 0px 5px 0px #000;
-    transform: translateY(-2px);
-}
-
-.btn-logout { 
-    background: #ff7675; 
-    color: #ffffff; 
-    border: 3px solid #000; 
     padding: 10px 18px; 
-    border-radius: 18px; 
-    font-weight: 900; 
-    font-size: 15px; 
-    cursor: pointer; 
-    box-shadow: 0px 4px 0px #000;
-}
-
-/* === 3. TRANG CHỦ (HOME PAGE) === */
-.welcome-banner { 
-    background: #a29bfe; 
-    color: #ffffff; 
-    padding: 30px; 
-    border-radius: 30px; 
-    border: 4px solid #000; 
-    box-shadow: 0px 10px 0px #000; 
-    margin-bottom: 28px; 
-}
-.banner-text h2 { margin: 0 0 10px 0; font-size: 30px; font-weight: 900; text-shadow: 2px 2px 0px #000; }
-.banner-text p { margin: 0; font-size: 18px; font-weight: 800; color: #ffeaa7; text-shadow: 1px 1px 0px #000; }
-
-.quick-menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
-.menu-card { 
-    background: #ffffff; 
-    padding: 30px; 
-    border-radius: 30px; 
-    border: 4px solid #000; 
-    box-shadow: 0px 10px 0px #000; 
-    text-align: center; 
-    cursor: pointer; 
-    transition: all 0.2s; 
-}
-.menu-card:hover { transform: translateY(-6px); box-shadow: 0px 14px 0px #000; }
-.card-blue { background: #74b9ff; }
-.card-orange { background: #ffbe76; }
-
-.card-icon { font-size: 60px; margin-bottom: 15px; animation: bounce 2s infinite; }
-.menu-card h3 { font-size: 26px; font-weight: 900; margin: 0 0 10px 0; color: #000000; }
-.menu-card p { font-size: 16px; font-weight: 800; color: #2d3436; margin: 0 0 20px 0; }
-.btn-card { 
-    background: #ff5e57; 
-    color: #ffffff; 
-    border: 3px solid #000; 
-    padding: 12px 24px; 
-    border-radius: 18px; 
-    font-weight: 900; 
     font-size: 16px; 
+    font-weight: 900; 
+    color: #000000; 
+    border-radius: 18px; 
     cursor: pointer; 
     box-shadow: 0px 5px 0px #000;
 }
 
-/* === 4. TRANG BÀI HỌC (LESSON PAGE) === */
+/* KHU VỰC BÀI HỌC */
 .workspace-grid { display: grid; grid-template-columns: 320px 1fr; gap: 24px; }
+
+/* SIDEBAR BẢNG CHỮ CÁI */
 .alphabet-sidebar { 
     background: #ffffff; 
     border-radius: 30px; 
@@ -308,9 +91,17 @@ body {
     box-shadow: 0px 10px 0px #000; 
 }
 .sidebar-header h3 { margin: 0 0 16px 0; font-size: 22px; font-weight: 900; color: #ff3366; text-align: center; }
-.alphabet-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; max-height: 480px; overflow-y: auto; padding-right: 5px; }
 
-/* Nút chữ cái hoạt họa 3D */
+.alphabet-grid { 
+    display: grid; 
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 12px; 
+    max-height: 480px; 
+    overflow-y: auto; 
+    padding-right: 5px; 
+}
+
+/* NÚT CHỮ CÁI 3D HOẠT HỌA */
 .letter-btn { 
     padding: 14px 0; 
     font-size: 26px; 
@@ -332,6 +123,7 @@ body {
     box-shadow: 0px 2px 0px #000; 
 }
 
+/* KHUNG HIỂN THỊ VIDEO & MÔ TẢ */
 .lesson-card { 
     background: #ffffff; 
     border-radius: 30px; 
@@ -343,18 +135,6 @@ body {
 .title-group { display: flex; align-items: center; gap: 12px; }
 .badge-icon { font-size: 32px; }
 .title-group h2 { margin: 0; font-size: 26px; font-weight: 900; color: #0984e3; }
-
-.btn-speech { 
-    background: #00b894; 
-    color: #ffffff; 
-    border: 3px solid #000; 
-    padding: 10px 20px; 
-    border-radius: 20px; 
-    font-weight: 900; 
-    font-size: 16px; 
-    cursor: pointer; 
-    box-shadow: 0px 5px 0px #000;
-}
 
 .video-frame-container { 
     position: relative; 
@@ -379,112 +159,8 @@ body {
 .guide-title { font-weight: 900; font-size: 18px; color: #d63031; margin-bottom: 6px; }
 .lesson-guide p { margin: 0; font-size: 17px; font-weight: 800; color: #2d3436; }
 
-/* === 5. TRANG BÀI TẬP (EXERCISE PAGE) === */
-.exercise-container { max-width: 680px; margin: 0 auto; }
-.exercise-card { 
-    background: #ffffff; 
-    padding: 32px; 
-    border-radius: 32px; 
-    border: 4px solid #000; 
-    box-shadow: 0px 12px 0px #000; 
-}
-.quiz-header { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    margin-bottom: 24px; 
-    border-bottom: 3px dashed #b2bec3; 
-    padding-bottom: 16px; 
-}
-.quiz-header h2 { font-size: 24px; font-weight: 900; color: #e17055; margin: 0; }
-.quiz-badge { 
-    background: #fdcb6e; 
-    color: #2d3436; 
-    padding: 8px 18px; 
-    border-radius: 18px; 
-    font-weight: 900; 
-    font-size: 16px; 
-    border: 3px solid #000; 
-    box-shadow: 0px 4px 0px #000;
-}
-
-.question-title { font-size: 22px; font-weight: 900; color: #2d3436; margin-bottom: 24px; text-align: center; }
-.options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.quiz-opt-btn { 
-    background: #74b9ff; 
-    border: 3px solid #000; 
-    padding: 18px; 
-    border-radius: 22px; 
-    font-size: 28px; 
-    font-weight: 900; 
-    color: #ffffff; 
-    cursor: pointer; 
-    text-transform: uppercase; 
-    box-shadow: 0px 6px 0px #000;
-    transition: all 0.1s;
-}
-.quiz-opt-btn:hover { background: #0984e3; transform: translateY(-2px); box-shadow: 0px 8px 0px #000; }
-.quiz-opt-btn:active { transform: translateY(4px); box-shadow: 0px 2px 0px #000; }
-
-.quiz-feedback { 
-    margin-top: 24px; 
-    padding: 16px; 
-    border-radius: 20px; 
-    font-weight: 900; 
-    text-align: center; 
-    font-size: 18px; 
-    border: 3px solid #000;
-    box-shadow: 0px 5px 0px #000;
-}
-.quiz-feedback.success { background: #55efc4; color: #00b894; }
-.quiz-feedback.error { background: #ff7675; color: #ffffff; }
-
-/* === 6. MODAL ĐỔI TÊN === */
-.modal-backdrop { 
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-    background: rgba(0, 0, 0, 0.6); 
-    display: flex; justify-content: center; align-items: center; 
-    z-index: 1000; 
-}
-.modal-box { 
-    background: #ffffff; 
-    padding: 30px; 
-    border-radius: 30px; 
-    border: 4px solid #000; 
-    box-shadow: 0px 10px 0px #000;
-    width: 100%; max-width: 400px; 
-}
-.modal-header h3 { margin: 0 0 16px 0; font-size: 22px; font-weight: 900; color: #ff3366; }
-.modal-body label { display: block; font-size: 15px; font-weight: 900; margin-bottom: 8px; }
-.modal-body input { 
-    width: 100%; 
-    padding: 12px 16px; 
-    border: 3px solid #000; 
-    border-radius: 16px; 
-    font-size: 16px; 
-    font-weight: 800; 
-    outline: none; 
-}
-.modal-footer { display: flex; gap: 12px; margin-top: 24px; justify-content: flex-end; }
-.btn-cancel { 
-    background: #dfe6e9; 
-    border: 3px solid #000; 
-    padding: 10px 18px; 
-    border-radius: 16px; 
-    font-weight: 900; 
-    font-size: 15px; 
-    color: #2d3436; 
-    cursor: pointer; 
-    box-shadow: 0px 4px 0px #000;
-}
-.btn-save { 
-    background: #00b894; 
-    border: 3px solid #000; 
-    padding: 10px 20px; 
-    border-radius: 16px; 
-    font-weight: 900; 
-    font-size: 15px; 
-    color: #ffffff; 
-    cursor: pointer; 
-    box-shadow: 0px 4px 0px #000;
+/* TỐI ƯU MOBILE */
+@media (max-width: 768px) {
+    .workspace-grid { grid-template-columns: 1fr; }
+    .alphabet-grid { grid-template-columns: repeat(5, 1fr); max-height: 200px; }
 }
