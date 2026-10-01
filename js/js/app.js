@@ -1,304 +1,340 @@
-/* ===================================================
-   MAIN APPLICATION LOGIC
-   =================================================== */
-
-let currentRole = 'student';
+// QUẢN LÝ TRẠNG THÁI ỨNG DỤNG
+let currentRole = 'HS'; // 'HS' hoặc 'GV'
+let currentAuthTab = 'login'; // 'login' hoặc 'register'
 let currentUser = null;
-let currentSelectedLetter = ALPHABET_DATA[0];
-let isDrawing = false;
-let userDrawingPoints = [];
+let currentTab = 'home';
+let currentLetter = 'a';
+let userStars = 3; // Sao thưởng của học sinh
 
-// Khởi tạo ứng dụng
-document.addEventListener("DOMContentLoaded", () => {
-    initDatabase();
-    renderAlphabetGrid();
-    setupCanvas();
+document.addEventListener('DOMContentLoaded', () => {
+    // Tải dữ liệu người dùng từ LocalStorage nếu có
+    const savedUser = localStorage.getItem('app_user');
+    if (savedUser) {
+        currentUser = JSON.parse(savedUser);
+        showApp();
+    }
 });
 
-function initDatabase() {
-    if (!localStorage.getItem("USERS")) {
-        localStorage.setItem("USERS", JSON.stringify(DEFAULT_USERS));
-    }
-}
-
-// Xử lý Auth
+// XỬ LÝ ĐĂNG NHẬP / ĐĂNG KÝ
 function setRole(role) {
     currentRole = role;
-    document.querySelectorAll('.role-btn').forEach(btn => btn.classList.remove('active'));
-    event.target.classList.add('active');
+    document.getElementById('role-hs').classList.toggle('active', role === 'HS');
+    document.getElementById('role-gv').classList.toggle('active', role === 'GV');
 }
 
-function handleLogin(e) {
+function switchAuthTab(tab) {
+    currentAuthTab = tab;
+    document.getElementById('tab-login').classList.toggle('active', tab === 'login');
+    document.getElementById('tab-register').classList.toggle('active', tab === 'register');
+    document.getElementById('register-fullname-group').classList.toggle('hidden', tab === 'login');
+    document.getElementById('btn-auth-submit').innerText = tab === 'login' ? '🚀 Vào Học Ngay' : '📝 Đăng Ký Tài Khoản';
+}
+
+function handleAuth(e) {
     e.preventDefault();
-    const id = document.getElementById('login-id').value.trim();
-    const pass = document.getElementById('login-pass').value.trim();
-    const users = JSON.parse(localStorage.getItem("USERS"));
+    const username = document.getElementById('auth-username').value.trim();
+    const fullname = document.getElementById('auth-fullname').value.trim();
 
-    const user = users.find(u => u.id === id && u.pass === pass && u.role === currentRole);
+    if (!username) return;
 
-    if (user) {
-        currentUser = user;
-        document.getElementById('auth-screen').classList.add('hidden');
-        if (user.role === 'student') {
-            document.getElementById('student-app').classList.remove('hidden');
-            document.getElementById('student-name-display').innerText = user.name;
-            document.getElementById('student-stars').innerText = user.stars || 0;
-            initGame();
-        } else {
-            document.getElementById('teacher-app').classList.remove('hidden');
-            renderTeacherStudentTable();
-            populatePrintSelect();
-        }
-    } else {
-        const err = document.getElementById('login-error');
-        err.innerText = "Mã số hoặc mật khẩu không chính xác!";
-        err.classList.remove('hidden');
-    }
+    currentUser = {
+        username: username,
+        name: currentAuthTab === 'register' && fullname ? fullname : (currentRole === 'HS' ? "Bé " + username : "Giáo viên " + username),
+        role: currentRole,
+        avatar: currentRole === 'HS' ? "✏️" : "👩‍‍🏫"
+    };
+
+    localStorage.setItem('app_user', JSON.stringify(currentUser));
+    showApp();
 }
 
 function logout() {
-    location.reload();
+    localStorage.removeItem('app_user');
+    currentUser = null;
+    document.getElementById('app-screen').classList.add('hidden');
+    document.getElementById('auth-screen').classList.remove('hidden');
 }
 
-/* ===================================================
-   GIAO DIỆN HỌC SINH & ANIMATION SVG
-   =================================================== */
+// HIỂN THỊ MÀN HÌNH CHÍNH
+function showApp() {
+    document.getElementById('auth-screen').classList.add('hidden');
+    document.getElementById('app-screen').classList.remove('hidden');
 
-function renderAlphabetGrid() {
-    const container = document.getElementById('alphabet-container');
-    container.innerHTML = "";
-    ALPHABET_DATA.forEach(item => {
-        const card = document.createElement('div');
-        card.className = "letter-card";
-        card.innerHTML = `<span class="char">${item.lower}</span><span style="font-size: 12px; color: #64748B;">${item.upper}</span>`;
-        card.onclick = () => selectLetter(item);
-        container.appendChild(card);
-    });
+    document.getElementById('user-name-display').innerText = currentUser.name;
+    document.getElementById('user-avatar-display').innerText = currentUser.avatar;
+    document.getElementById('user-role-tag').innerText = currentUser.role === 'HS' ? 'Học sinh' : 'Giáo viên';
+
+    renderNavigation();
+    switchTab(currentUser.role === 'HS' ? 'home' : 'gv-lessons');
 }
 
-function selectLetter(letterItem) {
-    currentSelectedLetter = letterItem;
-    document.getElementById('writing-zone').classList.remove('hidden');
-    document.getElementById('selected-letter-title').innerText = `${letterItem.name} (${letterItem.lower} / ${letterItem.upper})`;
-    clearCanvas();
-    drawStaticTemplateSVG();
-    playVoiceInstruction();
-}
-
-function playVoiceInstruction() {
-    VoiceAssistant.speak(`Đây là ${currentSelectedLetter.name}. Con hãy xem cách viết nhé.`);
-}
-
-function drawStaticTemplateSVG() {
-    const svg = document.getElementById('svg-animation');
-    svg.innerHTML = "";
-    currentSelectedLetter.strokes.forEach(stroke => {
-        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        path.setAttribute("d", stroke.d);
-        path.setAttribute("stroke", "#E2E8F0");
-        path.setAttribute("stroke-width", "8");
-        path.setAttribute("fill", "none");
-        path.setAttribute("stroke-linecap", "round");
-        svg.appendChild(path);
-    });
-}
-
-function startAnimation() {
-    const svg = document.getElementById('svg-animation');
-    svg.innerHTML = ""; // Clear old
-    
-    currentSelectedLetter.strokes.forEach((stroke, index) => {
-        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        path.setAttribute("d", stroke.d);
-        path.setAttribute("stroke", "#FF7B9C");
-        path.setAttribute("stroke-width", "8");
-        path.setAttribute("fill", "none");
-        path.setAttribute("stroke-linecap", "round");
-        
-        const length = 1000; // Chiều dài ước tính nét vẽ
-        path.style.strokeDasharray = length;
-        path.style.strokeDashoffset = length;
-        path.style.animation = `drawStroke 2s ease-in-out forwards ${index * 2}s`;
-        
-        svg.appendChild(path);
-    });
-
-    // Thêm CSS Keyframe động cho SVG Animation
-    if (!document.getElementById('svg-anim-style')) {
-        const style = document.createElement('style');
-        style.id = 'svg-anim-style';
-        style.innerHTML = `@keyframes drawStroke { to { stroke-dashoffset: 0; } }`;
-        document.head.appendChild(style);
-    }
-}
-
-/* ===================================================
-   CANVAS TỰ VIẾT BẰNG TAY (MOUSE/TOUCH)
-   =================================================== */
-
-function setupCanvas() {
-    const canvas = document.getElementById('paint-canvas');
-    const ctx = canvas.getContext('2d');
-
-    const getPos = (e) => {
-        const rect = canvas.getBoundingClientRect();
-        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-        return { x: clientX - rect.left, y: clientY - rect.top };
-    };
-
-    const startDraw = (e) => {
-        isDrawing = true;
-        const pos = getPos(e);
-        userDrawingPoints = [pos];
-        ctx.beginPath();
-        ctx.moveTo(pos.x, pos.y);
-        ctx.strokeStyle = "#2B2D42";
-        ctx.lineWidth = 6;
-        ctx.lineCap = "round";
-    };
-
-    const draw = (e) => {
-        if (!isDrawing) return;
-        const pos = getPos(e);
-        userDrawingPoints.push(pos);
-        ctx.lineTo(pos.x, pos.y);
-        ctx.stroke();
-    };
-
-    const stopDraw = () => { isDrawing = false; };
-
-    canvas.addEventListener('mousedown', startDraw);
-    canvas.addEventListener('mousemove', draw);
-    canvas.addEventListener('mouseup', stopDraw);
-
-    canvas.addEventListener('touchstart', startDraw);
-    canvas.addEventListener('touchmove', draw);
-    canvas.addEventListener('touchend', stopDraw);
-}
-
-function clearCanvas() {
-    const canvas = document.getElementById('paint-canvas');
-    const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    userDrawingPoints = [];
-    document.getElementById('feedback-msg').innerText = "";
-}
-
-function checkWriting() {
-    const result = StrokeRecognizer.evaluateStroke(userDrawingPoints, currentSelectedLetter.strokes[0].d);
-    const feedbackEl = document.getElementById('feedback-msg');
-    feedbackEl.innerText = result.feedback;
-    feedbackEl.style.color = result.isPassed ? "green" : "#E11D48";
-
-    if (result.isPassed && currentUser) {
-        currentUser.stars = (currentUser.stars || 0) + 2;
-        document.getElementById('student-stars').innerText = currentUser.stars;
-        VoiceAssistant.speak("Hoan hô! Con làm tốt lắm.");
-    } else {
-        VoiceAssistant.speak("Con hãy thử lại nhé.");
-    }
-}
-
-/* ===================================================
-   TRÒ CHƠI HỌC TẬP
-   =================================================== */
-let currentGameTarget = null;
-
-function initGame() {
-    const randomIndex = Math.floor(Math.random() * ALPHABET_DATA.length);
-    currentGameTarget = ALPHABET_DATA[randomIndex];
-
-    const optionsContainer = document.getElementById('game-options');
-    optionsContainer.innerHTML = "";
-
-    // Lấy ngẫu nhiên 3 lựa chọn
-    const options = [currentGameTarget];
-    while(options.length < 3) {
-        const rand = ALPHABET_DATA[Math.floor(Math.random() * ALPHABET_DATA.length)];
-        if(!options.find(o => o.id === rand.id)) options.push(rand);
-    }
-    options.sort(() => Math.random() - 0.5);
-
-    options.forEach(opt => {
-        const btn = document.createElement('button');
-        btn.className = "font-hp001";
-        btn.style.cssText = "font-size: 36px; width: 80px; height: 80px; border-radius: 16px; border: 2px solid #4ECDC4; background: white; cursor: pointer;";
-        btn.innerText = opt.lower;
-        btn.onclick = () => checkGameAnswer(opt);
-        optionsContainer.appendChild(btn);
-    });
-}
-
-function playGameAudio() {
-    if (currentGameTarget) {
-        VoiceAssistant.speak(`Hãy tìm chữ ${currentGameTarget.name}`);
-    }
-}
-
-function checkGameAnswer(selected) {
-    if (selected.id === currentGameTarget.id) {
-        alert("Chính xác! Con nhận được 5 ⭐");
-        currentUser.stars += 5;
-        document.getElementById('student-stars').innerText = currentUser.stars;
-        initGame();
-    } else {
-        alert("Chưa đúng rồi! Con thử lại nhé.");
-    }
-}
-
-/* ===================================================
-   GIÁO VIÊN & IN PHIẾU
-   =================================================== */
-
-function renderTeacherStudentTable() {
-    const users = JSON.parse(localStorage.getItem("USERS")).filter(u => u.role === 'student');
-    const tbody = document.getElementById('student-table-body');
-    tbody.innerHTML = "";
-    users.forEach(s => {
-        tbody.innerHTML += `
-            <tr style="border-bottom: 1px solid #E2E8F0;">
-                <td style="padding: 12px;">${s.id}</td>
-                <td style="padding: 12px;">${s.name}</td>
-                <td style="padding: 12px;">${s.class}</td>
-                <td style="padding: 12px;">⭐ ${s.stars}</td>
-            </tr>
+// ĐIỀU HƯỚNG MENU TỰ ĐỘNG THEO VAI TRÒ
+function renderNavigation() {
+    const navContainer = document.getElementById('main-nav-container');
+    if (currentUser.role === 'HS') {
+        navContainer.innerHTML = `
+            <button class="nav-btn" id="nav-home" onclick="switchTab('home')">🏠 Trang Chủ</button>
+            <button class="nav-btn" id="nav-lesson" onclick="switchTab('lesson')">📖 Bài Học</button>
+            <button class="nav-btn" id="nav-exercise" onclick="switchTab('exercise')">🎮 Trò Chơi & Bài Tập</button>
+            <button class="nav-btn" id="nav-profile" onclick="switchTab('profile')">👤 Tôi</button>
         `;
-    });
-}
-
-function populatePrintSelect() {
-    const select = document.getElementById('print-letter-select');
-    select.innerHTML = "";
-    ALPHABET_DATA.forEach(item => {
-        select.innerHTML += `<option value="${item.id}">${item.name} (${item.lower})</option>`;
-    });
-}
-
-function generatePrintSheet() {
-    const letterId = document.getElementById('print-letter-select').value;
-    const item = ALPHABET_DATA.find(a => a.id === letterId);
-    const container = document.getElementById('print-rows-container');
-    container.innerHTML = "";
-
-    for (let i = 0; i < 8; i++) {
-        const row = document.createElement('div');
-        row.style.cssText = "font-family: 'HP001_4_Normal'; font-size: 36px; letter-spacing: 25px; border-bottom: 1px dashed #CCC; margin-bottom: 15px; padding-bottom: 5px;";
-        row.innerText = `${item.lower} ${item.lower} ${item.lower} ${item.lower} ${item.lower} ${item.lower} ${item.lower}`;
-        container.appendChild(row);
+    } else {
+        navContainer.innerHTML = `
+            <button class="nav-btn" id="nav-gv-lessons" onclick="switchTab('gv-lessons')">🎬 Bài Giảng Youtube</button>
+            <button class="nav-btn" id="nav-gv-ai" onclick="switchTab('gv-ai')">🤖 AI Tạo Phiếu Tập</button>
+            <button class="nav-btn" id="nav-gv-games" onclick="switchTab('gv-games')">🎲 Kho Trò Chơi</button>
+        `;
     }
 }
 
-function showStudentTab(tab) {
-    document.getElementById('st-tab-learn').classList.add('hidden');
-    document.getElementById('st-tab-games').classList.add('hidden');
-    if(tab === 'learn') document.getElementById('st-tab-learn').classList.remove('hidden');
-    if(tab === 'games') document.getElementById('st-tab-games').classList.remove('hidden');
+// CHUYỂN ĐỔI TAB NỘI DUNG
+function switchTab(tab) {
+    currentTab = tab;
+    document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+    const activeNav = document.getElementById(`nav-${tab}`);
+    if (activeNav) activeNav.classList.add('active');
+
+    const content = document.getElementById('content-area');
+
+    // HỌC SINH TABS
+    if (tab === 'home') renderHomeTab(content);
+    else if (tab === 'lesson') renderLessonTab(content);
+    else if (tab === 'exercise') renderExerciseTab(content);
+    else if (tab === 'profile') renderProfileTab(content);
+
+    // GIÁO VIÊN TABS
+    else if (tab === 'gv-lessons') renderGvLessonsTab(content);
+    else if (tab === 'gv-ai') renderGvAiTab(content);
+    else if (tab === 'gv-games') renderGvGamesTab(content);
 }
 
-function showTeacherTab(tab) {
-    document.getElementById('tc-tab-students').classList.add('hidden');
-    document.getElementById('tc-tab-print').classList.add('hidden');
-    if(tab === 'students') document.getElementById('tc-tab-students').classList.remove('hidden');
-    if(tab === 'print') document.getElementById('tc-tab-print').classList.remove('hidden');
+/* ===================================================
+   GIAO DIỆN HỌC SINH
+   =================================================== */
+
+function renderHomeTab(container) {
+    container.innerHTML = `
+        <div class="welcome-banner">
+            <div class="banner-text">
+                <h2>Chào mừng ${currentUser.name} đến với lớp học! 🎉</h2>
+                <p>Hôm nay bé muốn luyện tập nét viết chữ cái nào?</p>
+            </div>
+        </div>
+        <div class="quick-menu-grid">
+            <div class="menu-card card-blue" onclick="switchTab('lesson')">
+                <div class="card-icon">📖</div>
+                <h3>Bài Học Chữ Cái</h3>
+                <p>Xem video hướng dẫn 29 chữ cái Tiếng Việt</p>
+                <button class="btn-card">Học Ngay</button>
+            </div>
+            <div class="menu-card card-orange" onclick="switchTab('exercise')">
+                <div class="card-icon">🎮</div>
+                <h3>Trò Chơi & Bài Tập</h3>
+                <p>Ôn luyện chữ cái và nhận sao thưởng ⭐</p>
+                <button class="btn-card">Chơi Ngay</button>
+            </div>
+        </div>
+    `;
+}
+
+function renderLessonTab(container) {
+    container.innerHTML = `
+        <div class="workspace-grid">
+            <aside class="alphabet-sidebar">
+                <div class="sidebar-header">
+                    <h3>Bảng 29 Chữ Cái</h3>
+                </div>
+                <div class="alphabet-grid" id="alphabet-grid"></div>
+            </aside>
+
+            <section class="lesson-card">
+                <div class="lesson-header">
+                    <div class="title-group">
+                        <span class="badge-icon">🎬</span>
+                        <h2 id="current-letter-title">Bài học chữ A</h2>
+                    </div>
+                </div>
+                <div class="video-frame-container">
+                    <iframe id="youtube-player" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                </div>
+                <div class="lesson-guide">
+                    <div class="guide-title">💡 Hướng dẫn nét viết:</div>
+                    <p id="letter-description">Đang tải hướng dẫn...</p>
+                </div>
+            </section>
+        </div>
+    `;
+
+    const grid = document.getElementById('alphabet-grid');
+    ALPHABET_DATA.forEach(item => {
+        const btn = document.createElement('button');
+        btn.className = `letter-btn ${item.letter === currentLetter ? 'active' : ''}`;
+        btn.id = `btn-letter-${item.letter}`;
+        btn.innerText = item.letter;
+        btn.onclick = () => selectLetter(item.letter);
+        grid.appendChild(btn);
+    });
+
+    selectLetter(currentLetter);
+}
+
+function selectLetter(letter) {
+    currentLetter = letter;
+    document.querySelectorAll('.letter-btn').forEach(b => b.classList.remove('active'));
+    const btn = document.getElementById(`btn-letter-${letter}`);
+    if (btn) btn.classList.add('active');
+
+    const data = ALPHABET_DATA.find(i => i.letter === letter);
+    if (!data) return;
+
+    document.getElementById('current-letter-title').innerText = `Bài học chữ ${data.upper} (${data.lower})`;
+    document.getElementById('letter-description').innerText = data.description;
+    document.getElementById('youtube-player').src = `https://www.youtube.com/embed/${data.youtubeId}?autoplay=1&rel=0`;
+}
+
+function renderExerciseTab(container) {
+    container.innerHTML = `
+        <div class="exercise-container">
+            <div style="background:#fff; padding:20px; border-radius:25px; border:4px solid #000; box-shadow:0 8px 0 #000; margin-bottom:20px; text-align:center;">
+                <h3 style="margin:0 0 10px 0; font-size:22px; color:#ff3366;">⭐ Bảng Thành Tích Khuyến Khích</h3>
+                <p style="font-weight:800; font-size:18px;">Bé đã tích lũy được: <span style="font-size:26px; color:#f1c40f;">${userStars} ⭐</span></p>
+                <button class="btn-submit" style="width:auto; padding:8px 20px; font-size:16px;" onclick="addRewardStar()">Phụ Huynh Thưởng 1 ⭐</button>
+            </div>
+
+            <div class="exercise-card">
+                <div class="quiz-header">
+                    <h2>🎮 Trò Chơi: Chọn Nét Viết Đúng</h2>
+                    <span class="quiz-badge">Chữ A</span>
+                </div>
+                <div class="question-title">Chữ "a" thường gồm những nét nào?</div>
+                <div class="options-grid">
+                    <button class="quiz-opt-btn" onclick="checkQuiz(true)">Nét cong khép kín & Nét móc ngược</button>
+                    <button class="quiz-opt-btn" onclick="checkQuiz(false)">Nét khuyết trên & Nét móc dưới</button>
+                </div>
+                <div id="quiz-feedback" class="quiz-feedback hidden"></div>
+            </div>
+
+            <div style="background:#fff; padding:25px; border-radius:25px; border:4px solid #000; box-shadow:0 8px 0 #000; margin-top:20px;">
+                <h3 style="margin:0 0 15px 0; font-size:22px; color:#0984e3;">📚 Bài Tập Về Nhà Giáo Viên Giao</h3>
+                <ul style="padding-left:20px; font-weight:800; font-size:16px; line-height:1.8;">
+                    ${INITIAL_HOMEWORK.map(item => `<li><strong>${item.title}:</strong>${item.desc}</li>`).join('')}
+                </ul>
+            </div>
+        </div>
+    `;
+}
+
+function checkQuiz(isCorrect) {
+    const feedback = document.getElementById('quiz-feedback');
+    feedback.classList.remove('hidden', 'success', 'error');
+    if (isCorrect) {
+        feedback.classList.add('success');
+        feedback.innerText = "🎉 Chính xác rồi! Bé giỏi quá! (+1 ⭐)";
+        userStars++;
+    } else {
+        feedback.classList.add('error');
+        feedback.innerText = "❌ Chưa đúng rồi, bé hãy xem lại video bài học nhé!";
+    }
+}
+
+function addRewardStar() {
+    userStars++;
+    switchTab('exercise');
+}
+
+function renderProfileTab(container) {
+    container.innerHTML = `
+        <div style="max-width:500px; margin:0 auto; background:#fff; padding:30px; border-radius:30px; border:4px solid #000; box-shadow:0 10px 0 #000; text-align:center;">
+            <div style="font-size:80px; background:#fffa65; width:120px; height:120px; line-height:120px; margin:0 auto 15px; border-radius:50%; border:4px solid #000;">${currentUser.avatar}</div>
+            <h2 style="margin:0 0 10px 0; font-size:28px;">${currentUser.name}</h2>
+            <p style="font-weight:800; color:#636e72;">Tài khoản: ${currentUser.username}</p>
+            <button class="btn-submit" onclick="openEditProfileModal()">✏️ Đổi Tên & Biểu Tượng</button>
+        </div>
+    `;
+}
+
+/* ===================================================
+   GIAO DIỆN GIÁO VIÊN
+   =================================================== */
+
+function renderGvLessonsTab(container) {
+    container.innerHTML = `
+        <div style="background:#fff; padding:25px; border-radius:30px; border:4px solid #000; box-shadow:0 10px 0 #000;">
+            <h2 style="margin:0 0 20px 0; color:#ff3366;">🎬 Quản Lý Video Bài Giảng 29 Chữ Cái</h2>
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:15px;">
+                ${ALPHABET_DATA.slice(0, 6).map(item => `
+                    <div style="border:3px solid #000; padding:15px; border-radius:20px; background:#ffeaa7;">
+                        <h3 style="margin:0 0 8px 0;">Chữ ${item.upper} (${item.lower})</h3>
+                        <p style="margin:0 0 10px 0; font-size:14px; font-weight:800;">Link ID: ${item.youtubeId}</p>
+                        <button class="btn-edit-inline" style="width:100%; padding:8px;" onclick="alert('Tính năng chỉnh sửa Link Youtube đang được cập nhật!')">✏️ Đổi Link Youtube</button>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `;
+}
+
+function renderGvAiTab(container) {
+    container.innerHTML = `
+        <div style="background:#fff; padding:25px; border-radius:30px; border:4px solid #000; box-shadow:0 10px 0 #000;">
+            <h2 style="margin:0 0 15px 0; color:#0984e3;">🤖 AI Trợ Lý Tạo Phiếu Bài Tập Viết</h2>
+            <div class="input-group">
+                <label>Nhập các chữ cái cần tạo phiếu (Ví dụ: a, ă, â, b, c):</label>
+                <input type="text" id="ai-letters-input" value="a, b, c">
+            </div>
+            <button class="btn-submit" style="width:auto; padding:10px 25px; margin-bottom:20px;" onclick="generateWorksheet()">✨ AI Sinh Phiếu Bài Tập</button>
+
+            <div id="worksheet-preview" style="border:3px dashed #000; padding:20px; border-radius:20px; background:#fff9db;">
+                <h3 contenteditable="true" style="text-align:center; margin-top:0;">PHIẾU BÀI TẬP TẬP VIẾT CHỮ CÁI</h3>
+                <p contenteditable="true">Họ và tên học sinh: ..............................................................</p>
+                <div id="worksheet-content" contenteditable="true" style="font-size:20px; font-weight:800; line-height:2;">
+                    - Tập viết chữ a: a a a a a a a a a<br>
+                    - Tập viết chữ b: b b b b b b b b b<br>
+                    - Tập viết chữ c: c c c c c c c c c
+                </div>
+            </div>
+            <button class="btn-submit" style="background:#00b894; margin-top:15px;" onclick="window.print()">🖨️ In Phiếu Bài Tập Tùy Chỉnh</button>
+        </div>
+    `;
+}
+
+function generateWorksheet() {
+    const letters = document.getElementById('ai-letters-input').value.split(',').map(s => s.trim());
+    const content = document.getElementById('worksheet-content');
+    content.innerHTML = letters.map(l => `- Tập viết chữ ${l}: ${l} ${l} ${l} ${l} ${l} ${l} ${l} ${l}`).join('<br>');
+}
+
+function renderGvGamesTab(container) {
+    container.innerHTML = `
+        <div style="background:#fff; padding:25px; border-radius:30px; border:4px solid #000; box-shadow:0 10px 0 #000;">
+            <h2 style="margin:0 0 15px 0; color:#e17055;">🎲 Kho Trò Chơi Sinh Động Nhớ Nét Chữ</h2>
+            <p style="font-weight:800;">Hệ thống cung cấp sẵn các mẫu trò chơi học tập dành cho 29 chữ cái Tiếng Việt.</p>
+            <ul>
+                <li><strong>Trò chơi 1:</strong> Tìm nét chữ giấu mặt (Ghép nét tạo thành chữ).</li>
+                <li><strong>Trò chơi 2:</strong> Vòng quay may mắn chọn chữ cái đọc âm.</li>
+            </ul>
+        </div>
+    `;
+}
+
+// XỬ LÝ MODAL CẬP NHẬT TÀI KHOẢN
+function openEditProfileModal() {
+    document.getElementById('edit-name-input').value = currentUser.name;
+    document.getElementById('profile-modal').classList.remove('hidden');
+}
+
+function closeEditProfileModal() {
+    document.getElementById('profile-modal').classList.add('hidden');
+}
+
+function saveProfile() {
+    const newName = document.getElementById('edit-name-input').value.trim();
+    const newAvatar = document.getElementById('edit-avatar-select').value;
+
+    if (newName) currentUser.name = newName;
+    currentUser.avatar = newAvatar;
+
+    localStorage.setItem('app_user', JSON.stringify(currentUser));
+    closeEditProfileModal();
+    showApp();
 }
