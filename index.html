@@ -3,152 +3,174 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bé Tập Viết Tiếng Việt Lớp 1 - HP001</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>Bé Tập Viết Chữ Cái Tiếng Việt</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css?v=3.0">
 </head>
 <body>
 
-    <!-- MÀN HÌNH ĐĂNG NHẬP -->
-    <div id="auth-screen" class="auth-container">
-        <div class="auth-card">
-            <div class="mascot-avatar">🐰</div>
-            <h2>BÉ TẬP VIẾT TIẾNG VIỆT</h2>
-            <p style="color: #64748B; margin-bottom: 15px;">Dành cho Học Sinh Lớp 1</p>
-
-            <div class="role-selector">
-                <button type="button" class="role-btn active" onclick="setRole('student')">🧒 HỌC SINH</button>
-                <button type="button" class="role-btn" onclick="setRole('teacher')">👩‍🏫 GIÁO VIÊN</button>
+    <!-- MÀN HÌNH ĐĂNG NHẬP / ĐĂNG KÝ -->
+    <div id="auth-screen" class="login-wrapper">
+        <div class="login-card">
+            <div class="brand-icon">✏️</div>
+            <div class="brand">
+                <h1>Bé Tập Viết Chữ</h1>
+                <p>Học viết chữ cái Tiếng Việt thật vui!</p>
             </div>
 
-            <form id="login-form" onsubmit="handleLogin(event)">
-                <div class="input-group">
-                    <label>Mã số đăng nhập:</label>
-                    <input type="text" id="login-id" placeholder="Ví dụ: HS001 hoặc GV001" required>
+            <div class="auth-tabs">
+                <button type="button" id="tab-login" class="tab-btn active" onclick="switchAuthTab('login')">Đăng Nhập</button>
+                <button type="button" id="tab-register" class="tab-btn" onclick="switchAuthTab('register')">Đăng Ký</button>
+            </div>
+
+            <form id="auth-form" onsubmit="handleAuthSubmit(event)">
+                <div class="role-switch">
+                    <button type="button" id="role-hs" class="role-btn active" onclick="selectRole('HS')">👶 Học Sinh</button>
+                    <button type="button" id="role-gv" class="role-btn" onclick="selectRole('GV')">👩‍🏫 Giáo Viên</button>
                 </div>
-                <div class="input-group">
-                    <label>Mật khẩu:</label>
-                    <input type="password" id="login-pass" placeholder="Nhập mật khẩu" required>
+
+                <div id="fullname-group" class="input-group hidden">
+                    <label for="reg-fullname">Họ và tên:</label>
+                    <input type="text" id="reg-fullname" placeholder="Nhập họ và tên...">
                 </div>
-                <div id="login-error" style="color: red; margin-bottom: 10px; font-size: 14px;" class="hidden"></div>
-                <button type="submit" class="btn-main">ĐĂNG NHẬP</button>
+
+                <div class="input-group">
+                    <label for="username">Tên đăng nhập:</label>
+                    <input type="text" id="username" placeholder="Nhập tên đăng nhập..." required>
+                </div>
+
+                <div class="input-group">
+                    <label for="password">Mật khẩu:</label>
+                    <input type="password" id="password" placeholder="Nhập mật khẩu..." required>
+                </div>
+
+                <button type="submit" id="btn-submit" class="btn-submit">🚀 Đăng Nhập Ngay</button>
             </form>
+
+            <div id="auth-error" class="error-banner hidden"></div>
         </div>
     </div>
 
-    <!-- GIAO DIỆN HỌC SINH -->
-    <div id="student-app" class="app-layout hidden">
-        <div class="sidebar">
-            <div style="text-align: center; margin-bottom: 20px;">
-                <div style="font-size: 40px;">🐰</div>
-                <h3 id="student-name-display">Bé An</h3>
-                <span style="background: #FFE5EC; color: #FF527B; padding: 4px 12px; border-radius: 20px; font-weight: bold;">
-                    ⭐ <span id="student-stars">0</span> Sao
-                </span>
+    <!-- MÀN HÌNH CHÍNH (GIAO DIỆN HỌC TẬP) -->
+    <div id="main-screen" class="main-wrapper hidden">
+        <!-- HEADER THÔNG TIN NGƯỜI DÙNG & MENU BÀI HỌC -->
+        <header class="top-header">
+            <div class="user-info-card">
+                <div id="user-avatar" class="avatar-badge">👶</div>
+                <div>
+                    <span id="user-role-badge" class="role-tag">Học Sinh</span>
+                    <div class="name-display">
+                        <span id="user-display-name">Bé Minh Anh</span>
+                        <button class="btn-edit-inline" onclick="openEditNameModal()">✏️ Đổi tên</button>
+                    </div>
+                </div>
             </div>
-            <div class="sidebar-menu">
-                <button onclick="showStudentTab('home')" class="active">🏠 Trang chủ</button>
-                <button onclick="showStudentTab('learn')">✍️ Học chữ cái</button>
-                <button onclick="showStudentTab('games')">🎮 Trò chơi</button>
-                <button onclick="logout()" style="color: red; margin-top: 40px;">🚪 Đăng xuất</button>
+
+            <!-- THANH ĐIỀU HƯỚNG TRANG CHỦ / BÀI HỌC / BÀI TẬP -->
+            <nav class="main-nav">
+                <button id="nav-home" class="nav-btn active" onclick="switchPage('home')">🏠 Trang Chủ</button>
+                <button id="nav-lesson" class="nav-btn" onclick="switchPage('lesson')">📚 Bài Học</button>
+                <button id="nav-exercise" class="nav-btn" onclick="switchPage('exercise')">📝 Bài Tập</button>
+            </nav>
+
+            <button class="btn-logout" onclick="handleLogout()">🚪 Đăng xuất</button>
+        </header>
+
+        <!-- 1. TRANG CHỦ (HOME PAGE) -->
+        <section id="page-home" class="page-content">
+            <div class="welcome-banner">
+                <div class="banner-text">
+                    <h2>Chào mừng <span id="home-user-name">Bé</span> đến với lớp tập viết! 🌟</h2>
+                    <p>Hãy chọn bài học để luyện tập viết 29 chữ cái Tiếng Việt nhé.</p>
+                </div>
             </div>
-        </div>
 
-        <div class="main-content">
-            <!-- TAB HỌC CHỮ -->
-            <div id="st-tab-learn">
-                <h2>HỌC CHỮ CÁI TIẾNG VIỆT</h2>
-                <div class="letter-grid" id="alphabet-container"></div>
+            <div class="quick-menu-grid">
+                <div class="menu-card card-blue" onclick="switchPage('lesson')">
+                    <div class="card-icon">📚</div>
+                    <h3>Thư Viện Bài Học</h3>
+                    <p>Xem video hướng dẫn 29 chữ cái Tiếng Việt chuẩn bộ giáo dục.</p>
+                    <button class="btn-card">Vào Học Ngay 👉</button>
+                </div>
 
-                <!-- BẢNG TẬP VIẾT -->
-                <div id="writing-zone" class="hidden" style="margin-top: 30px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                        <h3 id="selected-letter-title" class="font-hp001" style="font-size: 28px;">Chữ a</h3>
-                        <div>
-                            <button onclick="playVoiceInstruction()" style="padding: 8px 16px; background: #4ECDC4; color: white; border: none; border-radius: 8px; cursor: pointer;">🔊 Nghe đọc</button>
-                            <button onclick="startAnimation()" style="padding: 8px 16px; background: #FFD166; border: none; border-radius: 8px; cursor: pointer;">▶ Xem cách viết</button>
+                <div class="menu-card card-orange" onclick="switchPage('exercise')">
+                    <div class="card-icon">📝</div>
+                    <h3>Thử Thách Bài Tập</h3>
+                    <p>Cùng ôn luyện kiến thức qua các câu hỏi trắc nghiệm chữ cái.</p>
+                    <button class="btn-card">Làm Bài Tập 👉</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. TRANG BÀI HỌC (LESSON PAGE) -->
+        <section id="page-lesson" class="page-content hidden">
+            <div class="workspace-grid">
+                <aside class="alphabet-sidebar">
+                    <div class="sidebar-header">
+                        <h3>🎨 Chọn Chữ Cái</h3>
+                    </div>
+                    <div id="alphabet-container" class="alphabet-grid"></div>
+                </aside>
+
+                <main class="lesson-card">
+                    <div class="lesson-header">
+                        <div class="title-group">
+                            <span class="badge-icon">📝</span>
+                            <h2 id="current-letter-title">Bài học chữ A</h2>
                         </div>
+                        <button class="btn-speech" onclick="speakCurrentLetter()">🔊 Nghe phát âm</button>
                     </div>
 
-                    <!-- Khung Ô ly -->
-                    <div class="oly-grid-container">
-                        <svg id="svg-animation" class="oly-svg"></svg>
-                        <canvas id="paint-canvas" class="oly-canvas" width="600" height="400"></canvas>
+                    <div class="video-frame-container">
+                        <iframe id="youtube-player" src="" title="Hướng dẫn viết chữ" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                     </div>
 
-                    <div style="text-align: center; margin-top: 15px;">
-                        <button onclick="clearCanvas()" style="padding: 10px 20px; background: #CBD5E1; border: none; border-radius: 8px;">🗑️ Xóa viết lại</button>
-                        <button onclick="checkWriting()" style="padding: 10px 20px; background: #FF7B9C; color: white; border: none; border-radius: 8px; font-weight: bold;">✔️ Chấm điểm</button>
+                    <div class="lesson-guide">
+                        <div class="guide-title">📌 Hướng dẫn nét viết:</div>
+                        <p id="letter-description">Chữ a gồm 2 nét: Nét cong tròn khép kín và nét móc ngược phải.</p>
                     </div>
-                    <div id="feedback-msg" style="text-align: center; margin-top: 10px; font-weight: bold; font-size: 18px;"></div>
+                </main>
+            </div>
+        </section>
+
+        <!-- 3. TRANG BÀI TẬP (EXERCISE PAGE) -->
+        <section id="page-exercise" class="page-content hidden">
+            <div class="exercise-container">
+                <div class="exercise-card">
+                    <div class="quiz-header">
+                        <h2>🎯 Trắc Nghiệm Nhận Biết Chữ Cái</h2>
+                        <span id="quiz-progress" class="quiz-badge">Câu 1/3</span>
+                    </div>
+
+                    <div class="quiz-body">
+                        <h3 id="quiz-question" class="question-title">Đang tải câu hỏi...</h3>
+                        <div id="quiz-options" class="options-grid"></div>
+                    </div>
+
+                    <div id="quiz-feedback" class="quiz-feedback hidden"></div>
                 </div>
             </div>
-
-            <!-- TAB TRÒ CHƠI -->
-            <div id="st-tab-games" class="hidden">
-                <h2>🎮 TRÒ CHƠI LUYỆN CHỮ</h2>
-                <div style="background: white; padding: 20px; border-radius: 16px; margin-top: 20px; text-align: center;">
-                    <h3>GAME: TÌM CHỮ THEO PHÁT ÂM</h3>
-                    <p style="margin: 10px 0;">Nghe âm thanh và chọn đúng chữ cái nhé!</p>
-                    <button onclick="playGameAudio()" style="padding: 10px 20px; background: #4ECDC4; color: white; border: none; border-radius: 8px; margin-bottom: 20px;">🔊 Nghe lại âm</button>
-                    <div id="game-options" style="display: flex; justify-content: center; gap: 15px;"></div>
-                </div>
-            </div>
-        </div>
+        </section>
     </div>
 
-    <!-- GIAO DIỆN GIÁO VIÊN -->
-    <div id="teacher-app" class="app-layout hidden">
-        <div class="sidebar">
-            <h3>QUẢN LÝ GIÁO VIÊN</h3>
-            <div class="sidebar-menu" style="margin-top: 20px;">
-                <button onclick="showTeacherTab('students')" class="active">👧 Học sinh</button>
-                <button onclick="showTeacherTab('print')">🖨️ In Phiếu Viết</button>
-                <button onclick="logout()" style="color: red; margin-top: 40px;">🚪 Đăng xuất</button>
+    <!-- MODAL ĐỔI TÊN -->
+    <div id="edit-name-modal" class="modal-backdrop hidden">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>✏️ Cập Nhật Tên Hiển Thị</h3>
             </div>
-        </div>
-
-        <div class="main-content">
-            <!-- QUẢN LÝ HỌC SINH -->
-            <div id="tc-tab-students">
-                <h2>DANH SÁCH HỌC SINH</h2>
-                <table style="width: 100%; border-collapse: collapse; margin-top: 20px; background: white; border-radius: 8px; overflow: hidden;">
-                    <thead style="background: #F1F5F9;">
-                        <tr>
-                            <th style="padding: 12px; text-align: left;">Mã HS</th>
-                            <th style="padding: 12px; text-align: left;">Họ tên</th>
-                            <th style="padding: 12px; text-align: left;">Lớp</th>
-                            <th style="padding: 12px; text-align: left;">Số sao</th>
-                        </tr>
-                    </thead>
-                    <tbody id="student-table-body"></tbody>
-                </table>
+            <div class="modal-body">
+                <label for="new-display-name">Tên mới của bạn:</label>
+                <input type="text" id="new-display-name" placeholder="Nhập tên mới...">
             </div>
-
-            <!-- TAB IN PHIẾU BÀI TẬP -->
-            <div id="tc-tab-print" class="hidden">
-                <h2>TẠO PHIẾU LUYỆN VIẾT IN A4</h2>
-                <div style="margin: 20px 0;">
-                    <label>Chọn chữ cái in phiếu:</label>
-                    <select id="print-letter-select" style="padding: 8px; border-radius: 8px;"></select>
-                    <button onclick="generatePrintSheet()" style="padding: 8px 16px; background: #FF7B9C; color: white; border: none; border-radius: 8px;">Tạo Phiếu In</button>
-                    <button onclick="window.print()" style="padding: 8px 16px; background: #2B2D42; color: white; border: none; border-radius: 8px; margin-left: 10px;">🖨️ In Ngay (A4)</button>
-                </div>
-
-                <div id="print-section">
-                    <div class="oly-paper">
-                        <h2 style="text-align: center; font-family: 'HP001_4_Normal'; font-size: 32px;">PHIẾU LUYỆN VIẾT TIỂU HỌC</h2>
-                        <p style="text-align: center;">Họ và tên học sinh: ..................................................... Lớp: .............</p>
-                        <hr style="margin: 20px 0;">
-                        <div id="print-rows-container"></div>
-                    </div>
-                </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeEditNameModal()">Hủy</button>
+                <button class="btn-save" onclick="saveNewName()">Lưu Lại</button>
             </div>
         </div>
     </div>
 
     <script src="js/data.js"></script>
-    <script src="js/strokeRecognizer.js"></script>
-    <script src="js/speech.js"></script>
-    <script src="js/app.js"></script>
+    <script src="js/main.js?v=3.0"></script>
 </body>
 </html>
